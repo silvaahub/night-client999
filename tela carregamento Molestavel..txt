@@ -1,0 +1,97 @@
+
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "LoadingScreen"
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999999
+gui.Parent = player:WaitForChild("PlayerGui")
+
+
+local backdrop = Instance.new("Frame")
+backdrop.Size = UDim2.new(1, 0, 1, 0)
+backdrop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+backdrop.Parent = gui
+
+local bg = Instance.new("ImageLabel")
+bg.AnchorPoint = Vector2.new(0.5, 0.5)
+bg.Position = UDim2.new(0.5, 0, 0.5, 0)
+bg.Size = UDim2.new(1, 0, 1, 0)
+bg.BackgroundTransparency = 1
+bg.ScaleType = Enum.ScaleType.Fit 
+bg.Image = "rbxassetid://105847449161769"
+bg.Parent = gui
+
+
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://88064647826500"
+sound.Volume = 1
+sound.Looped = true
+sound.Parent = gui
+sound:Play()
+
+
+local barContainer = Instance.new("Frame")
+barContainer.Size = UDim2.new(0.6, 0, 0.045, 0)
+barContainer.Position = UDim2.new(0.2, 0, 0.85, 0)
+barContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+barContainer.Parent = gui
+Instance.new("UICorner", barContainer).CornerRadius = UDim.new(1, 0)
+
+
+local bar = Instance.new("Frame")
+bar.Size = UDim2.new(0, 0, 1, 0)
+bar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+bar.Parent = barContainer
+Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
+
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(255, 255, 255)
+stroke.Thickness = 2
+stroke.Transparency = 0.2
+stroke.Parent = bar
+
+TweenService:Create(
+	stroke,
+	TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
+	{Transparency = 0.7}
+):Play()
+
+-- %
+local percent = Instance.new("TextLabel")
+percent.Size = UDim2.new(1, 0, 1, 0)
+percent.BackgroundTransparency = 1
+percent.Text = "0%"
+percent.Font = Enum.Font.GothamBold
+percent.TextScaled = true
+percent.TextColor3 = Color3.fromRGB(0, 0, 0)
+percent.Parent = barContainer
+
+
+local duration = 10
+
+TweenService:Create(
+	bar,
+	TweenInfo.new(duration, Enum.EasingStyle.Linear),
+	{Size = UDim2.new(1, 0, 1, 0)}
+):Play()
+
+task.spawn(function()
+	for i = 0, 100 do
+		percent.Text = i .. "%"
+		task.wait(duration / 100)
+	end
+end)
+
+task.wait(duration - 2)
+TweenService:Create(sound, TweenInfo.new(2), {Volume = 0}):Play()
+
+task.wait(2)
+sound:Stop()
+gui:Destroy()
